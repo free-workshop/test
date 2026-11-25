@@ -87,7 +87,7 @@ h1 small{display:block;font-size:.5em;letter-spacing:.06em;margin-top:6px}
 
 /* ---------- form ---------- */
 .prog{display:flex;align-items:center;gap:14px;margin-bottom:28px}
-.bar{flex:1;display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.bar{flex:1;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:5px}
 .bar i{height:6px;border-radius:9px;background:var(--line);transition:background .3s}
 .bar i.on{background:var(--ink)}
 .left{font-size:12px;font-weight:700;background:var(--soft);border-radius:999px;padding:4px 12px;white-space:nowrap}
@@ -112,6 +112,29 @@ h2{font-size:clamp(24px,3.4vw,30px);line-height:1.4;font-weight:900;margin:6px 0
 .opt .tag{display:block;font-size:11px;font-weight:700;color:var(--ink2);margin-top:2px}
 .grid.three .opt{text-align:center;padding:18px 8px;font-size:18px}
 .grid.three .opt[aria-pressed="true"]::after{display:none}
+/* 複数選択 */
+.opt.chk{padding-left:48px}
+.opt.chk::before{content:"";position:absolute;left:14px;top:50%;width:22px;height:22px;margin-top:-11px;border-radius:7px;border:2px solid #bfb4a0;background:#fff}
+.opt.chk[aria-pressed="true"]::before{border-color:#fff}
+.opt.chk[aria-pressed="true"]::after{left:22px;right:auto;width:7px;height:12px;margin-top:-8px;border-radius:0;background:none;border:solid var(--ink);border-width:0 3px 3px 0;transform:rotate(45deg)}
+/* ご来場者の選択 */
+.att-list{display:grid;gap:10px}
+.att{display:flex;align-items:center;gap:8px;border:2px solid var(--line);border-radius:18px;background:var(--paper);transition:border-color .15s,background .15s}
+.att.on{border-color:var(--ink);background:#f7f3ea}
+.att-name{flex:1;appearance:none;border:0;background:none;text-align:left;font-weight:700;font-size:16px;padding:12px 14px;display:flex;align-items:center;gap:12px;min-height:58px;border-radius:16px}
+.att-name .box{width:22px;height:22px;border-radius:7px;border:2px solid #bfb4a0;display:grid;place-items:center;flex:none;background:#fff}
+.att.on .att-name .box{background:var(--ink);border-color:var(--ink)}
+.att.on .att-name .box::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:translateY(-1px) rotate(45deg)}
+.stepper{display:flex;align-items:center;gap:2px;padding-right:9px}
+.stepper[hidden]{display:none}
+.stepper button{width:38px;height:38px;border-radius:50%;border:0;background:var(--ink);color:#fff;font-size:20px;font-weight:700;line-height:1;display:grid;place-items:center;padding:0}
+.stepper button:disabled{opacity:.2;cursor:not-allowed}
+.stepper output{min-width:2.6em;text-align:center;font-size:18px;font-weight:900}
+.stepper output small{font-size:12px;margin-left:1px}
+.att-status{font-size:14px;font-weight:700;margin:14px 2px 18px;color:var(--ink2);background:var(--soft);border-radius:14px;padding:10px 14px}
+.att-status.ok{color:#23704f;background:#e3f4ec}
+.att-status.over{color:#b03a2e;background:#fde8e8}
+.terms ul{margin:0;padding-left:1.2em}.terms li+li{margin-top:8px}
 
 .field label{display:block;font-weight:700;font-size:14px;margin-bottom:8px}
 .input{width:100%;border:2px solid var(--line);background:#fff;border-radius:18px;padding:16px 18px;font-size:18px;outline:none;transition:border-color .15s,box-shadow .15s}
@@ -160,6 +183,9 @@ h2{font-size:clamp(24px,3.4vw,30px);line-height:1.4;font-weight:900;margin:6px 0
   body:not([data-view="intro"]) .panel{min-height:calc(100dvh - 24px)}
   .opt{font-size:15px;padding:14px 14px}
   .info strong{font-size:15px}
+  .opt.chk{font-size:14px;padding-left:44px;padding-right:8px}
+  .opt.chk::before{left:12px}
+  .opt.chk[aria-pressed="true"]::after{left:20px}
   .sum div{grid-template-columns:1fr auto;grid-template-areas:"t e" "d e";padding:12px 16px}
   .demo{top:auto;bottom:10px}
 }
@@ -203,7 +229,6 @@ h2{font-size:clamp(24px,3.4vw,30px);line-height:1.4;font-weight:900;margin:6px 0
         <li class="deadline"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#d29a00" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></span>
           <div><small>応募締切</small><strong><span class="nw">2026年11月27日（金）</span><span class="nw">23:59まで</span></strong></div></li>
       </ul>
-      <div class="meta"><span class="chip">全6問</span><span class="chip">約1分で完了</span><span class="chip">ニックネームOK</span></div>
       <div class="spacer"></div>
       <div id="closedMsg" class="closed" hidden>応募受付は終了しました。たくさんのご応募ありがとうございました。</div>
       <button class="btn" id="startBtn" type="button">イベントに応募する<span class="arw"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></button>
@@ -212,7 +237,7 @@ h2{font-size:clamp(24px,3.4vw,30px);line-height:1.4;font-weight:900;margin:6px 0
 
     <!-- ===== 質問 ===== -->
     <section data-panel="form" hidden>
-      <div class="prog" aria-hidden="true"><div class="bar"><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="left" id="left"></span></div>
+      <div class="prog" aria-hidden="true"><div class="bar" id="bar"></div><span class="left" id="left"></span></div>
       <div id="step" class="step"></div>
     </section>
 
@@ -235,7 +260,7 @@ h2{font-size:clamp(24px,3.4vw,30px);line-height:1.4;font-weight:900;margin:6px 0
       <div class="done-mark"><span><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></div>
       <h2 id="t-done" tabindex="-1">ご応募ありがとう<br>ございました！</h2>
       <div><span class="receipt" id="receipt" hidden></span></div>
-      <p class="hint">当選のご連絡は、主催店舗よりSMSまたはお電話で差し上げます。<br>当日お会いできるのを楽しみにしています。</p>
+      <p class="hint">当日お会いできるのを楽しみにしています。</p>
       <dl class="sum" id="sumDone" style="text-align:left"></dl>
     </section>
 
@@ -255,25 +280,39 @@ const CONFIG = {
     { label: "11月28日（土）", slots: ["10:00〜11:30","11:30〜13:00","13:00〜14:30","14:30〜16:00","16:00〜18:00"] },
     { label: "11月29日（日）", slots: ["10:00〜11:30","11:30〜13:00","13:00〜14:30","14:30〜16:00","16:00〜18:00"] }
   ],
-  people: ["1名","2名","3名","4名","5名","6名以上"]
+  people: ["1名","2名","3名","4名","5名","6名以上"],
+  attendeeTypes: ["お母さん","お父さん","お子さま","おばあちゃん","おじいちゃん","ご友人","その他"],
+  carriers: ["NTTドコモ","au","ソフトバンク","楽天モバイル","ahamo","UQモバイル","Yモバイル","LINEMO","povo","その他"]
 };
 
 /* ========================================================= */
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ARROW = '<span class="arw"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>';
-const state = { slot1:null, slot2:null, people:null, name:"", phone:"", agree:false };
+const state = { slot1:null, slot2:null, people:null, attendees:{}, name:"", phone:"", carriers:[], agree:false };
 let step = 0, editing = false, view = "intro";
 
 const normPhone = v => v.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/[^\d]/g, "");
-const validPhone = v => /^0\d{9,10}$/.test(normPhone(v));
+const validPhone = v => /^0\d{10}$/.test(normPhone(v));
+const peopleMin = () => parseInt(state.people, 10) || 0;          // 「6名以上」は6
+const peopleOpen = () => state.people === "6名以上";
+const attTotal = () => Object.values(state.attendees).reduce((a, b) => a + b, 0);
+const attOk = () => !!state.people && attTotal() > 0 && (peopleOpen() ? attTotal() >= peopleMin() : attTotal() === peopleMin());
+const attText = () => CONFIG.attendeeTypes.filter(t => state.attendees[t]).map(t => `${t} ${state.attendees[t]}名`).join("、");
 const isClosed = () => Date.now() > Date.parse(CONFIG.deadline);
 
 const STEPS = [
   { key:"slot1", title:"第1希望の日時を<br>選んでください。", hint:"選択すると、次の画面へ進みます。", ok:()=>!!state.slot1, render:()=>slotHTML("slot1") },
   { key:"slot2", title:"第2希望の日時を<br>選んでください。", hint:"第1希望と異なる日時を選んでください。", ok:()=>!!state.slot2 && state.slot2!==state.slot1, render:()=>slotHTML("slot2") },
-  { key:"people", title:"参加人数を<br>教えてください。", hint:"保護者の方とお子さまを含めた参加人数を選んでください。", ok:()=>!!state.people,
-    render:()=>`<div class="grid three" role="group" aria-label="参加人数">${CONFIG.people.map(p=>optHTML("people",p,p)).join("")}</div>` },
+  { key:"people", title:"ご来場される人数を<br>教えてください。", hint:"保護者の方とお子さまを含めた参加人数を選んでください。", ok:()=>!!state.people,
+    render:()=>`<div class="grid three" role="group" aria-label="ご来場人数">${CONFIG.people.map(p=>optHTML("people",p,p)).join("")}</div>` },
+  { key:"attendees", title:"当日ご来場される方を<br>ご選択ください。", hint:"※ご来場人数と同数になるようにご選択ください。", ok:attOk,
+    render:()=>`<div class="att-list" role="group" aria-label="ご来場される方">${CONFIG.attendeeTypes.map(t=>`<div class="att" data-att="${esc(t)}">
+        <button type="button" class="att-name" data-att-toggle><span class="box"></span>${t}</button>
+        <div class="stepper"><button type="button" data-att-dec aria-label="${t}を1名減らす">−</button><output aria-live="polite"></output><button type="button" data-att-inc aria-label="${t}を1名増やす">＋</button></div>
+      </div>`).join("")}</div>
+      <p class="att-status" id="attStatus" aria-live="polite"></p>
+      <button class="btn" type="button" data-next>次へ${ARROW}</button>`, after:updateAtt },
   { key:"name", title:"お名前を<br>教えてください。", hint:"", ok:()=>{const n=state.name.trim();return n.length>0&&n.length<=40},
     render:()=>`<div class="field"><label for="f-name">お名前（ニックネーム可）</label>
       <input class="input" id="f-name" type="text" autocomplete="name" maxlength="40" placeholder="例：山田ママ" value="${esc(state.name)}" enterkeyhint="next">
@@ -284,10 +323,14 @@ const STEPS = [
     render:()=>`<div class="field"><label for="f-phone">電話番号</label>
       <input class="input" id="f-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="16" placeholder="090 1234 5678" value="${esc(state.phone)}" enterkeyhint="next">
       <p class="err" id="e-phone"></p></div>
-      <p class="sub">当選・参加のご案内に使用します。連絡の取れる電話番号をご入力ください。<br>電話番号のご記入が誤っている場合、当選連絡を差し上げることができませんので、ご注意ください。</p>
+      <p class="sub">ご入力いただいた情報は、本イベントの当選連絡にのみ使用いたします。<br>当選された方には、ご入力いただいた携帯電話番号宛てにショートメッセージ（SMS）またはお電話でご連絡いたします。<br>落選された方へのご連絡はいたしませんので、あらかじめご了承ください。</p>
       <button class="btn" type="button" data-next>次へ${ARROW}</button>` },
+  { key:"carriers", title:"現在お使いの携帯電話会社を<br>教えてください。", hint:"携帯電話会社が主催のイベントのため、アンケートにご協力ください。（複数選択可）", ok:()=>state.carriers.length>0,
+    render:()=>`<div class="grid" role="group" aria-label="携帯電話会社（複数選択可）">${CONFIG.carriers.map(c=>`<button type="button" class="opt chk" data-multi="${esc(c)}" aria-pressed="${state.carriers.includes(c)}">${c}</button>`).join("")}</div>
+      <div class="spacer" style="min-height:22px;flex:none"></div>
+      <button class="btn" type="button" data-next ${state.carriers.length?"":"disabled"}>次へ${ARROW}</button>` },
   { key:"agree", title:"応募条件をご確認のうえ、<br>ご応募ください。", hint:"", ok:()=>state.agree,
-    render:()=>`<div class="terms"><p>当選のご連絡は、主催店舗よりSMSまたはお電話でご連絡します。</p><p>ご入力いただいた氏名・電話番号・回答内容は、本イベントの受付・運営にのみ使用します。</p></div>
+    render:()=>`<div class="terms"><ul><li>当選のご連絡は、主催店舗またはその業務委託先がショートメッセージ（SMS）またはお電話にてご連絡します。</li><li>本応募フォームにご入力いただいた氏名・電話番号・回答内容などの個人情報は、本イベントの主催店舗およびその業務委託先のみが、応募受付・抽選・当選連絡・参加確認など、本イベントの運営に必要な範囲で利用いたします。<br>取得した個人情報は適切に管理し、本イベント以外の目的には利用いたしません。</li></ul></div>
       <label class="check"><input type="checkbox" id="f-agree" ${state.agree?"checked":""}>応募条件と個人情報の取り扱いに同意します</label>
       <button class="btn" type="button" data-next ${state.agree?"":"disabled"}>確認画面へ${ARROW}</button>` }
 ];
@@ -305,6 +348,26 @@ function slotHTML(key){
     }).join("")}</div></div>`).join("");
 }
 
+function updateAtt(){
+  const total = attTotal(), need = peopleMin(), cap = peopleOpen() ? 30 : need;
+  document.querySelectorAll("[data-att]").forEach(row => {
+    const c = state.attendees[row.dataset.att] || 0;
+    row.classList.toggle("on", c > 0);
+    row.querySelector("[data-att-toggle]").setAttribute("aria-pressed", c > 0);
+    const st = row.querySelector(".stepper"); st.hidden = c === 0;
+    row.querySelector("output").innerHTML = `${c}<small>名</small>`;
+    row.querySelector("[data-att-inc]").disabled = total >= cap;
+  });
+  const box = $("#attStatus"); if (!box) return;
+  const label = peopleOpen() ? "6名以上" : `${need}名`;
+  box.className = "att-status";
+  if (attOk()){ box.classList.add("ok"); box.textContent = `✓ ご来場人数（${label}）と一致しました（選択中 ${total}名）`; }
+  else if (!peopleOpen() && total > need){ box.classList.add("over"); box.textContent = `選択中 ${total}名：ご来場人数（${label}）より${total-need}名多いです。人数を減らしてください。`; }
+  else { box.textContent = total === 0 ? `ご来場人数（${label}）と同じ人数になるように選んでください。` : `選択中 ${total}名 ／ ご来場人数 ${label}（あと${need-total}名）`; }
+  const nx = $("#step [data-next]"); if (nx) nx.disabled = !attOk();
+  document.querySelectorAll(".bar i")[step].classList.toggle("on", attOk());
+}
+
 /* ---------- 描画 ---------- */
 function renderStep(){
   const s = STEPS[step];
@@ -317,12 +380,15 @@ function renderStep(){
     ${s.render()}
     <div class="spacer"></div>
     <button class="back" type="button" data-back>← ${step===0?"イベント情報に戻る":"前の質問に戻る"}</button>`;
+  if (s.after) s.after();
   const input = box.querySelector(".input");
   if (input && matchMedia("(pointer:fine)").matches) input.focus(); else box.querySelector("h2").focus({preventScroll:true});
 }
 function summaryHTML(withEdit){
-  const rows = [["第1希望","slot1",0],["第2希望","slot2",1],["参加人数","people",2],["お名前","name",3],["電話番号","phone",4]];
-  return rows.map(([l,k,i]) => `<div><dt>${l}</dt><dd>${esc(k==="phone"?normPhone(state[k]):state[k])}</dd>${withEdit?`<button type="button" class="edit" data-edit="${i}">修正</button>`:"<span></span>"}</div>`).join("");
+  const idx = k => STEPS.findIndex(s => s.key === k);
+  const rows = [["第1希望","slot1",state.slot1],["第2希望","slot2",state.slot2],["ご来場人数","people",state.people],["ご来場される方","attendees",attText()],
+    ["お名前","name",state.name.trim()],["電話番号","phone",normPhone(state.phone)],["携帯電話会社","carriers",state.carriers.join("、")]];
+  return rows.map(([l,k,v]) => `<div><dt>${l}</dt><dd>${esc(v)}</dd>${withEdit?`<button type="button" class="edit" data-edit="${idx(k)}">修正</button>`:"<span></span>"}</div>`).join("");
 }
 function apply(to){
   if (typeof to === "number"){ view = "form"; step = to; renderStep(); }
@@ -351,7 +417,10 @@ function next(){
 }
 function showFieldError(key){
   if (key === "name"){ setErr("name", state.name.trim() ? "40文字以内で入力してください。" : "お名前を入力してください。"); }
-  if (key === "phone"){ setErr("phone", state.phone ? "電話番号を正しく入力してください（例：090 1234 5678）。" : "電話番号を入力してください。"); }
+  if (key === "phone"){
+    const d = normPhone(state.phone);
+    setErr("phone", !d ? "電話番号を入力してください。" : d.length !== 11 ? `電話番号は11桁で入力してください（現在${d.length}桁）。` : "電話番号は0から始まる11桁で入力してください。");
+  }
 }
 function setErr(k, msg){
   const i = $("#f-"+k), e = $("#e-"+k);
@@ -370,6 +439,24 @@ document.addEventListener("click", e => {
     setTimeout(next, 240);
     return;
   }
+  const att = e.target.closest("[data-att]");
+  if (att){
+    const t = att.dataset.att, c = state.attendees[t] || 0;
+    if (e.target.closest("[data-att-toggle]")) state.attendees[t] = c ? 0 : 1;
+    else if (e.target.closest("[data-att-inc]")) state.attendees[t] = c + 1;
+    else if (e.target.closest("[data-att-dec]")) state.attendees[t] = Math.max(0, c - 1);
+    if (!state.attendees[t]) delete state.attendees[t];
+    updateAtt(); return;
+  }
+  const multi = e.target.closest("[data-multi]");
+  if (multi){
+    const v = multi.dataset.multi, on = state.carriers.includes(v);
+    state.carriers = on ? state.carriers.filter(x => x !== v) : CONFIG.carriers.filter(x => x === v || state.carriers.includes(x));
+    multi.setAttribute("aria-pressed", !on);
+    $("#step [data-next]").disabled = !state.carriers.length;
+    document.querySelectorAll(".bar i")[step].classList.toggle("on", state.carriers.length > 0);
+    return;
+  }
   if (e.target.closest("[data-next]")) return next();
   if (e.target.closest("[data-back]")) return history.back();
   const ed = e.target.closest("[data-edit]");
@@ -380,7 +467,7 @@ document.addEventListener("input", e => {
   if (e.target.id === "f-phone"){ state.phone = e.target.value; if (validPhone(state.phone)) setErr("phone",""); }
 });
 document.addEventListener("change", e => {
-  if (e.target.id === "f-agree"){ state.agree = e.target.checked; $("#step [data-next]").disabled = !state.agree; document.querySelectorAll(".bar i")[5].classList.toggle("on", state.agree); }
+  if (e.target.id === "f-agree"){ state.agree = e.target.checked; $("#step [data-next]").disabled = !state.agree; document.querySelectorAll(".bar i")[STEPS.length-1].classList.toggle("on", state.agree); }
 });
 document.addEventListener("keydown", e => {
   if (e.key === "Enter" && !e.isComposing && e.target.classList && e.target.classList.contains("input")){ e.preventDefault(); next(); }
@@ -394,7 +481,7 @@ $("#sendBtn").addEventListener("click", async () => {
   if (firstInvalid() !== -1){ editing = true; go(firstInvalid()); return; }
   if (isClosed()){ err.textContent = "応募受付は終了しました。"; err.hidden = false; return; }
   btn.disabled = true; btn.classList.add("loading"); err.hidden = true;
-  const payload = { slot1:state.slot1, slot2:state.slot2, people:state.people, name:state.name.trim(), phone:normPhone(state.phone), agree:state.agree, website:$("#hp").value };
+  const payload = { slot1:state.slot1, slot2:state.slot2, people:state.people, attendees:state.attendees, name:state.name.trim(), phone:normPhone(state.phone), carriers:state.carriers, agree:state.agree, website:$("#hp").value };
   try {
     let res;
     if (!CONFIG.endpoint){ await new Promise(r => setTimeout(r, 800)); res = { ok:true, id:"PREVIEW" }; }
@@ -414,6 +501,7 @@ $("#sendBtn").addEventListener("click", async () => {
 });
 
 /* ---------- 初期化 ---------- */
+$("#bar").innerHTML = STEPS.map(() => "<i></i>").join("");
 history.replaceState({to:"intro"}, "");
 if (isClosed()){ $("#startBtn").disabled = true; $("#closedMsg").hidden = false; }
 if (!CONFIG.endpoint){ const d = document.createElement("div"); d.className = "demo"; d.textContent = "プレビューモード（送信されません）"; document.body.appendChild(d); }
